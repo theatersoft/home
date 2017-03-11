@@ -9,9 +9,10 @@
     "adduser": "sudo adduser --system --group --disabled-password theatersoft",
     "link": "npm link @theatersoft/client @theatersoft/server",
     "link-config": "",
-    "deploy-opt": ""
+    "deploy": "node deploy"
   },
   "devDependencies": {
+    "shelljs": "^0.7.0"
   },
   "dependencies": {
     "@theatersoft/client": "~1",
