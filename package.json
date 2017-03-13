@@ -1,0 +1,19 @@
+{
+  "name": "home",
+  "version": "1.0.0",
+  "description": "Theatersoft Home",
+  "author": "Rob Huehn <rob@theatersoft.com>",
+  "license": "AGPL-3.0",
+  "private": true,
+  "scripts": {
+    "link": "npm link @theatersoft/client @theatersoft/server",
+    "link-config": "",
+    "deploy-opt": ""
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+    "@theatersoft/client": "~1",
+    "@theatersoft/server": "~3"
+  }
+}

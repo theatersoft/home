@@ -1,0 +1,25 @@
+{
+  "hosts": [
+    {
+      "name": "name",
+      "host": "name.local",
+      "mac": "00:00:00:00:00:0",
+      "cameras": [
+      ],
+      "services": [
+        {
+          "enabled": true,
+          "module": "@theatersoft/device",
+          "export": "Device",
+          "name": "Device",
+          "config": {
+          }
+        }
+      ]
+    }
+  ],
+  "cameraOrder": [
+  ],
+  "configs": {
+  }
+}
