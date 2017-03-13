@@ -6,10 +6,17 @@
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
-    "adduser": "sudo adduser --system --group --disabled-password theatersoft",
     "link": "npm link @theatersoft/client @theatersoft/server",
-    "link-config": "",
-    "deploy": "node deploy"
+    "config": "node deploy config",
+    "deploy-office": "node deploy deploy -- office",
+    "deploy-theater": "node deploy deploy -- theater",
+    "deploy-studio": "node deploy deploy -- studio",
+    "deploy-files": "node deploy deploy -- files"
+  },
+  "deployScripts": {
+    "adduser": "sudo adduser --system --group --disabled-password theatersoft",
+    "start": "npm explore @theatersoft/server npm run start-root",
+    "start-capture": "npm explore @theatersoft/server npm run start-capture"
   },
   "devDependencies": {
     "shelljs": "^0.7.0"
