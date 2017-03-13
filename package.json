@@ -6,6 +6,7 @@
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
+    "adduser": "sudo adduser --system --group --disabled-password theatersoft",
     "link": "npm link @theatersoft/client @theatersoft/server",
     "link-config": "",
     "deploy-opt": ""
