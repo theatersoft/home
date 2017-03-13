@@ -6,8 +6,9 @@
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
-    "link": "npm link @theatersoft/client @theatersoft/server",
+    "link": "npm link @theatersoft/server",
     "config": "node deploy config",
+    "debug-config": "node --inspect-brk deploy config",
     "deploy-office": "node deploy deploy -- office",
     "deploy-theater": "node deploy deploy -- theater",
     "deploy-studio": "node deploy deploy -- studio",
@@ -22,7 +23,7 @@
     "shelljs": "^0.7.0"
   },
   "dependencies": {
-    "@theatersoft/client": "~1",
-    "@theatersoft/server": "~3"
+    "@theatersoft/client": "/home/rob/Theatersoft/client/dist",
+    "@theatersoft/server": "/home/rob/Theatersoft/server/dist"
   }
 }

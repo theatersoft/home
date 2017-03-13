@@ -16,7 +16,7 @@ const targets = {
         log('target config')
         exec(`mkdir -p deploy`)
         const
-            find = module => execo(`cd server; npm explore ${module} pwd`),
+            find = module => execo(`${module === '@theatersoft/server' ? '' : 'npm explore @theatersoft/server '}npm explore ${module} pwd`),
             pack = path => execo(`cd deploy; npm pack ${path}`),
             baseDependencies = {
                 "@theatersoft/client": pack(find('@theatersoft/client')),
