@@ -17,12 +17,15 @@ const targets = {
 
     pack () {
         const {hosts = []} = cfg
+        exec(`mkdir -p deploy`)
         hosts.forEach(({name, services = []}) => {
             console.log(`\n${name}`)
             services.forEach(({module}) => {
                 const path = execo(`cd server; npm explore ${module} pwd`)
                 console.log('└──', module)
                 console.log('    ', path)
+                const file = execo(`cd ${path}; npm pack`)
+                exec(`cd deploy; mv ${path}/${file} .`)
             })
         })
     },
