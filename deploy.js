@@ -61,14 +61,14 @@ const targets = {
         log('target deploy', host)
         if (host === hostname) {
             exec(`mkdir -p ${DEST}`)
-            exec(`cp deploy/*.tgz deploy/${host}/package.json ${DEST}`)
+            exec(`cp deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
             exec(`cd ${DEST}; npm install`)
         } else {
             const
                 ssh = c => exec(`ssh ${host}.local "${c}"`),
                 scp = (s, d) => exec(`scp ${s} ${host}.local:${d || ''}`)
             ssh(`mkdir -p ${DEST}`)
-            scp(`deploy/*.tgz deploy/${host}/package.json`, DEST)
+            scp(`deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
             ssh(`cd ${DEST}; npm install`)
         }
     },
