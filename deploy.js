@@ -64,7 +64,12 @@ const targets = {
             exec(`cp deploy/*.tgz deploy/${host}/package.json ${DEST}`)
             exec(`cd ${DEST}; npm install`)
         } else {
-            log('TODO')
+            const
+                ssh = c => exec(`ssh ${host}.local "${c}"`),
+                scp = (s, d) => exec(`scp ${s} ${host}.local:${d || ''}`)
+            ssh(`mkdir -p ${DEST}`)
+            scp(`deploy/*.tgz deploy/${host}/package.json`, DEST)
+            ssh(`cd ${DEST}; npm install`)
         }
     },
 
@@ -76,7 +81,10 @@ const targets = {
             for (const mod of modules)
                 exec(`cd ${DEST}; npm link ${mod}`)
         } else {
-            log('TODO')
+            const
+                ssh = c => exec(`ssh ${host}.local "${c}"`)
+            for (const mod of modules)
+                ssh(`cd ${DEST}; npm link ${mod}`)
         }
     }
 }
