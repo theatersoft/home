@@ -1,17 +1,17 @@
 # Theatersoft Home
-This is the site configuration and deployment automation to install and manage a Theatersoft Home system including all client, server and service modules required by the local configuration.
+This is the site configuration and deployment automation to install and manage a Theatersoft Home system on one or more hosts, including all client, server and per host configured service modules.
 
 1. `npm run config`
     * Prepares package.json files with configured service dependencies for each host in config.json.
-    * Packs a snapshots of each local Theatersoft dependency package.
+    * Packs snapshots of each local Theatersoft dependency package.
 2. `npm run deploy`
     * One step deployment.
     * (See notes for initial setup.)
 3. `npm run start`
-`npm run stop`
+    `npm run stop`
 
 ## Install
-Since this package will store local site configuration, use git to manage all local changes.
+Since this package will store local site configuration, use `git` to manage all local changes.
 ```
 git clone git@github.com:theatersoft/home.git
 cd home
