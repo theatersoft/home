@@ -12,8 +12,8 @@
   },
   "deployScripts": {
     "adduser": "sudo adduser --system --group --disabled-password theatersoft",
-    "start": "npm explore @theatersoft/server npm run start-root",
-    "start-capture": "npm explore @theatersoft/server npm run start-capture"
+    "start": "XDG_CONFIG_HOME=/opt/theatersoft/.config npm explore @theatersoft/server npm run start",
+    "start-capture": "XDG_CONFIG_HOME=/opt/theatersoft/.config npm explore @theatersoft/server npm run start-capture"
   },
   "devDependencies": {
     "shelljs": "^0.7.0"
