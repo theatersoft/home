@@ -16,7 +16,8 @@ const targets = {
         log('target config')
         exec(`mkdir -p deploy`)
         const
-            find = module => execo(`${module === '@theatersoft/server' ? '' : 'npm explore @theatersoft/server '}npm explore ${module} pwd`),
+            find = module => execo(`${module === '@theatersoft/server' ? ''
+                : 'npm explore @theatersoft/server '}npm explore ${module} pwd`),
             pack = path => execo(`cd deploy; npm pack ${path}`),
             baseDependencies = {
                 "@theatersoft/client": pack(find('@theatersoft/client')),
@@ -36,8 +37,11 @@ const targets = {
                 return o
             }, Object.assign({}, baseDependencies)))
         })
-        Object.assign(pkg.scripts, hosts.reduce((o, {name}) =>
-            ((o[`deploy-${name}`] = `node deploy deploy -- ${name}`), o), {}))
+        Object.assign(pkg.scripts, hosts.reduce((o, {name}) => {
+            o[`deploy-${name}`] = `node deploy deploy -- ${name}`
+            o[`deploy-link-${name}`] = `node deploy link -- ${name}`
+            return o
+        }, {}))
         write('package.json', pkg)
     },
 
@@ -54,11 +58,23 @@ const targets = {
     deploy (host) {
         if (!host) return hosts.forEach(({name}) => targets.deploy(name))
         if (Array.isArray(host)) host = host[0]
-        log('target host', host)
+        log('target deploy', host)
         if (host === hostname) {
             exec(`mkdir -p ${DEST}`)
             exec(`cp deploy/*.tgz deploy/${host}/package.json ${DEST}`)
             exec(`cd ${DEST}; npm install`)
+        } else {
+            log('TODO')
+        }
+    },
+
+    link (host) {
+        if (Array.isArray(host)) host = host[0]
+        log('target link', host)
+        const modules = Object.keys(require(`./deploy/${host}/package.json`).dependencies)
+        if (host === hostname) {
+            for (const mod of modules)
+                exec(`cd ${DEST}; npm link ${mod}`)
         } else {
             log('TODO')
         }
