@@ -1,23 +1,75 @@
 # Theatersoft Home
-This is the site configuration and deployment automation to install and manage a Theatersoft Home system on one or more hosts, including all client, server and per host configured service modules.
+This repository contains the site configuration and deployment automation used to install and manage Theatersoft Home.
 
-1. `npm run config`
-    * Prepares package.json files with configured service dependencies for each host in config.json.
-    * Packs snapshots of each local Theatersoft dependency package.
-2. `npm run deploy`
-    * One step deployment.
-    * (See notes for initial setup.)
-3. `npm run start`
-    `npm run stop`
+> ### What is Theatersoft Home?
+> * A smart home software platform written in modern JavaScript with Node.js servers, web browser clients with touch enabled UI for controlling all aspects of your home, and device service modules for popular home automation device protocols.
+>* The open source platform currently includes home automation, control, monitoring, security, camera surveillance, and is easily extensible.
+>* The platform is highly flexible and enables a distributed system using multiple hosts, with service modules connecting devices wherever needed.
+
+## Requirements
+### 1. **Linux**
+ Any reasonable hardware and recent Linux supporting systemd should be fine.
+### 2. **Node.js (>= 7.6.0)**
+
+ [nvm](https://github.com/creationix/nvm) is always advised for painless Node.js version management.
 
 ## Install
-Since this package will store local site configuration, use `git` to manage all local changes.
+1. Since this package stores local site configuration, `git` is used to manage local changes.
 ```
 git clone git@github.com:theatersoft/home.git
 cd home
+```
+
+> At this point you should create a local branch to save any local site configuration.
+> ```
+> git checkout -b local
+> ```
+
+2. Install the package dependencies. This includes the platform itself, starting with [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) and [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/server).
+```
 npm install
+```
+
+3. **Now edit config.json**
+
+    TODO automate initialization of localhost: {name, host, mac}
+
+    Add additional hosts. TODO doc
+
+    Add services, e.g.:
+```
+        {
+          "enabled": true,
+          "module": "@theatersoft/zwave",
+          "export": "ZWave",
+          "name": "ZWave",
+          "config": {
+            "port": "/dev/zwave",
+              "options": {
+              "Logging": true,
+              "ConsoleOutput": true,
+              "SaveLogLevel": 6
+            }
+          }
+        }
+```
+
+    TODO doc services
+
+4. The next step packs and stages the installed packages so they can be copied and installed to the deployment locations, both locally and on remote hosts. This is required if any local packages have unpublished changes during development. (If developers prefer the npm link approach it is also supported with link scripts in every package.)
+
+```
 npm run config
-npm run deploy
+```
+5. The config step added a set of customized deploy-<host> scripts so you may want to `git commit -a` the changes.
+
+    Then run the deploy script to copy and install to each configured host.
+
+```
+npm run deploy-<hostname>
+```
+6. Start the platform manually.
+```
 npm run start
 ```
 ### Client Browser
