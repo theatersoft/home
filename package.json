@@ -8,11 +8,7 @@
   "scripts": {
     "link": "npm link @theatersoft/server",
     "config": "node deploy config",
-    "debug-config": "node --inspect-brk deploy config",
-    "deploy-office": "node deploy deploy -- office",
-    "deploy-theater": "node deploy deploy -- theater",
-    "deploy-studio": "node deploy deploy -- studio",
-    "deploy-files": "node deploy deploy -- files"
+    "debug-config": "node --inspect-brk deploy config"
   },
   "deployScripts": {
     "adduser": "sudo adduser --system --group --disabled-password theatersoft",
