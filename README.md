@@ -25,7 +25,7 @@ cd home
 > git checkout -b local
 > ```
 
-2. Install the package dependencies. This includes the platform itself, starting with [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) and [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/server).
+2. Install the package dependencies.
 ```
 npm install
 ```
@@ -36,7 +36,51 @@ npm install
 
     Add additional hosts. TODO doc
 
-    Add services, e.g.:
+
+
+4. The next step packs and stages the installed packages so they can be copied and installed to the deployment locations, both locally and on remote hosts. This is required if any local packages have unpublished changes during development. (If developers prefer the npm link approach it is also supported with link scripts in every package.)
+
+```
+npm run config
+```
+
+> The config step added a set of customized deploy-<host> scripts in `package.json` and populated files in the `deploy` directory so you should now `git commit -a` the changes.
+
+5. Run the deploy scripts individually to install each configured host. This installs the platform [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) , [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client), and configured service modules.
+
+```
+npm run deploy-<hostname>
+```
+> The default install location is `/opt/theatersoft`. The `package.json`file in that directory contains several scripts for host management and operation.
+
+6. Start the platform manually.
+```
+cd /opt/theatersoft
+npm run start
+```
+
+### Client Browser
+Use the current stable version of Chrome to run the client web app.
+
+### Client Pairing
+Open `https://localhost`
+
+### Using Self-signed Server Certificates in Chrome
+Open `chrome://settings/certificates`
+
+Select the SERVERS tab
+
+`IMPORT` */opt/theatersoft/.config/theatersoft/server.cer*
+
+### Configure port forwarding for external clients
+
+### Use a custom domain name
+
+### Add another host server
+
+### Add a service module
+
+Add services, e.g.:
 ```
         {
           "enabled": true,
@@ -53,45 +97,6 @@ npm install
           }
         }
 ```
-
-    TODO doc services
-
-4. The next step packs and stages the installed packages so they can be copied and installed to the deployment locations, both locally and on remote hosts. This is required if any local packages have unpublished changes during development. (If developers prefer the npm link approach it is also supported with link scripts in every package.)
-
-```
-npm run config
-```
-5. The config step added a set of customized deploy-<host> scripts so you may want to `git commit -a` the changes.
-
-    Then run the deploy script to copy and install to each configured host.
-
-```
-npm run deploy-<hostname>
-```
-6. Start the platform manually.
-```
-npm run start
-```
-### Client Browser
-Use the current stable version of Chrome to run the client web app.
-
-### Using Self-signed Server Certificate
-Open `chrome://settings/certificates`
-
-Select the SERVERS tab
-
-`IMPORT` */opt/theatersoft/.config/theatersoft/server.cer*
-
-### Client Pairing
-Open `https://localhost`
-
-### Configure port forwarding for external clients
-
-### Use a custom domain name
-
-### Add another host server
-
-### Add a service module
 
 ## Support
 https://github.com/theatersoft
