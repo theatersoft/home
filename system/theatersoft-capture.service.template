@@ -1,0 +1,14 @@
+[Unit]
+Description=Theatersoft capture server
+After=theatersoft.service
+
+[Service]
+User={{USER}}
+WorkingDirectory=/opt/theatersoft/node_modules/@theatersoft/server/
+Environment=XDG_CONFIG_HOME=/opt/theatersoft/.config/
+EnvironmentFile=/opt/theatersoft/.config/theatersoft/.bus
+ExecStartPre=/bin/sleep 2
+ExecStart=/usr/local/bin/node capture/start.js
+
+[Install]
+WantedBy=multi-user.target

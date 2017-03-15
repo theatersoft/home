@@ -1,0 +1,12 @@
+[Unit]
+Description=Theatersoft server
+
+[Service]
+User={{USER}}
+WorkingDirectory=/opt/theatersoft/node_modules/@theatersoft/server/
+Environment=XDG_CONFIG_HOME=/opt/theatersoft/.config/
+EnvironmentFile=/opt/theatersoft/.config/theatersoft/{{BUS}}
+ExecStart={{AUTHBIND}} /usr/local/bin/node server.js
+
+[Install]
+WantedBy=multi-user.target
