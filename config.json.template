@@ -2,8 +2,8 @@
   "password": "0000",
   "hosts": [
     {
-      "name": "name",
-      "host": "name.local",
+      "name": "{{HOSTNAME}}",
+      "host": "{{HOSTNAME}}.local",
       "mac": "00:00:00:00:00:0",
       "cameras": [
       ],
