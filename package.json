@@ -11,7 +11,6 @@
     "debug-config": "node --inspect-brk deploy config"
   },
   "deployScripts": {
-    "adduser": "sudo adduser --system --group --disabled-password theatersoft",
     "start": "XDG_CONFIG_HOME=/opt/theatersoft/.config npm explore @theatersoft/server npm run start",
     "start-capture": "XDG_CONFIG_HOME=/opt/theatersoft/.config npm explore @theatersoft/server npm run start-capture"
   },
