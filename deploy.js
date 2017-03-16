@@ -4,12 +4,20 @@ const
     DEST = '/opt/theatersoft',
     fs = require('fs'),
     pkg = require('./package.json'),
-    cfg = require('./config.json'),
-    {hosts = []} = cfg,
     hostname = require('os').hostname(),
     execo = c => exec(c, {silent: true}).stdout.trim(),
     write = (file, json) => fs.writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
     log = console.log
+
+try {fs.accessSync('config.json')}
+catch (e) {
+    log('Creating config.json')
+    exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.json.template > config.json`)
+}
+
+const
+    cfg = require('./config.json'),
+    {hosts = []} = cfg
 
 const targets = {
     config () {
