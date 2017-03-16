@@ -20,5 +20,8 @@
   "dependencies": {
     "@theatersoft/client": "~1",
     "@theatersoft/server": "~3"
+  },
+  "theatersoft": {
+    "pack": false
   }
 }

@@ -26,7 +26,9 @@ const targets = {
         const
             find = module => execo(`${module === '@theatersoft/server' ? ''
                 : 'npm explore @theatersoft/server '}npm explore ${module} pwd`),
-            pack = path => execo(`cd deploy; npm pack ${path}`),
+            pack = path => pkg.theatersoft.pack
+                ? execo(`cd deploy; npm pack ${path}`)
+                : require(`${path}/package.json`).version,
             baseDependencies = {
                 "@theatersoft/client": pack(find('@theatersoft/client')),
                 "@theatersoft/server": pack(find('@theatersoft/server')),
@@ -59,7 +61,8 @@ const targets = {
             dependencies,
             devDependencies: undefined,
             scripts: Object.assign({}, pkg.deployScripts, {link}),
-            deployScripts: undefined
+            deployScripts: undefined,
+            theatersoft: undefined
         }))
     },
 
