@@ -47,7 +47,6 @@ const targets = {
         })
         Object.assign(pkg.scripts, hosts.reduce((o, {name}) => {
             o[`deploy-${name}`] = `node deploy deploy -- ${name}`
-            o[`deploy-link-${name}`] = `node deploy link -- ${name}`
             return o
         }, {}))
         write('package.json', pkg)
@@ -55,10 +54,11 @@ const targets = {
 
     package (host, dependencies) {
         exec(`mkdir -p deploy/${host}`)
+        const link = Object.keys(dependencies).map(d => `npm link ${d}`).join('; ')
         write(`deploy/${host}/package.json`, Object.assign({}, pkg, {
             dependencies,
             devDependencies: undefined,
-            scripts: pkg.deployScripts,
+            scripts: Object.assign({}, pkg.deployScripts, {link}),
             deployScripts: undefined
         }))
     },
@@ -78,21 +78,6 @@ const targets = {
             ssh(`mkdir -p ${DEST}`)
             scp(`deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
             ssh(`cd ${DEST}; npm install`)
-        }
-    },
-
-    link (host) {
-        if (Array.isArray(host)) host = host[0]
-        log('target link', host)
-        const modules = Object.keys(require(`./deploy/${host}/package.json`).dependencies)
-        if (host === hostname) {
-            for (const mod of modules)
-                exec(`cd ${DEST}; npm link ${mod}`)
-        } else {
-            const
-                ssh = c => exec(`ssh ${host}.local "${c}"`)
-            for (const mod of modules)
-                ssh(`cd ${DEST}; npm link ${mod}`)
         }
     }
 }
