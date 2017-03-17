@@ -5,6 +5,7 @@ const
     fs = require('fs'),
     pkg = require('./package.json'),
     hostname = require('os').hostname(),
+    root = host => host === hostname,
     execo = c => exec(c, {silent: true}).stdout.trim(),
     write = (file, json) => fs.writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
     log = console.log
@@ -29,24 +30,23 @@ const targets = {
             pack = path => pkg.theatersoft.pack
                 ? execo(`cd deploy; npm pack ${path}`)
                 : require(`${path}/package.json`).version,
-            baseDependencies = {
-                "@theatersoft/client": pack(find('@theatersoft/client')),
+            server = {
                 "@theatersoft/server": pack(find('@theatersoft/server')),
                 "@theatersoft/bus": pack(find('@theatersoft/bus'))
+            },
+            client = {
+                "@theatersoft/client": pack(find('@theatersoft/client'))
             }
-        log('Base dependencies:\n')
-        log(baseDependencies)
-        log('\nService dependencies:')
+
         hosts.forEach(({name, services = []}) => {
             log(`\n${name}`)
             targets.package(name, services.reduce((o, {module}) => {
                 const path = find(module)
-                log('└──', module)
                 o[module] = pack(path)
-                log('    ', path, '\n    ...', o[module])
                 return o
-            }, Object.assign({}, baseDependencies)))
+            }, Object.assign({}, server, name === hostname && client)))
         })
+
         Object.assign(pkg.scripts, hosts.reduce((o, {name}) => {
             o[`deploy-${name}`] = `node deploy deploy -- ${name}`
             return o
@@ -55,6 +55,7 @@ const targets = {
     },
 
     package (host, dependencies) {
+        log(dependencies)
         exec(`mkdir -p deploy/${host}`)
         const link = Object.keys(dependencies).map(d => `npm link ${d}`).join('; ')
         write(`deploy/${host}/package.json`, Object.assign({}, pkg, {
