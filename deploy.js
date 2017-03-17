@@ -5,7 +5,7 @@ const
     fs = require('fs'),
     pkg = require('./package.json'),
     hostname = require('os').hostname(),
-    root = host => host === hostname,
+    isRoot = host => host === hostname,
     execo = c => exec(c, {silent: true}).stdout.trim(),
     write = (file, json) => fs.writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
     log = console.log
@@ -44,7 +44,7 @@ const targets = {
                 const path = find(module)
                 o[module] = pack(path)
                 return o
-            }, Object.assign({}, server, name === hostname && client)))
+            }, Object.assign({}, server, isRoot(name) && client)))
         })
 
         Object.assign(pkg.scripts, hosts.reduce((o, {name}) => {
@@ -58,10 +58,11 @@ const targets = {
         log(dependencies)
         exec(`mkdir -p deploy/${host}`)
         const link = Object.keys(dependencies).map(d => `npm link ${d}`).join('; ')
+        const start = `${pkg.deployScripts.start}${isRoot(host) ? '' : '-child'}`
         write(`deploy/${host}/package.json`, Object.assign({}, pkg, {
             dependencies,
             devDependencies: undefined,
-            scripts: Object.assign({}, pkg.deployScripts, {link}),
+            scripts: Object.assign({}, pkg.deployScripts, {link}, {start}),
             deployScripts: undefined,
             theatersoft: undefined
         }))
@@ -71,15 +72,17 @@ const targets = {
         if (!host) return hosts.forEach(({name}) => targets.deploy(name))
         if (Array.isArray(host)) host = host[0]
         log('target deploy', host)
-        if (host === hostname) {
-            exec(`mkdir -p ${DEST}`)
+        if (isRoot(host)) {
+            //exec(`sudo mkdir -p ${DEST}`)
+            //exec(`sudo chown $USER ${DEST}`)
             exec(`cp deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
             exec(`cd ${DEST}; npm install`)
         } else {
             const
                 ssh = c => exec(`ssh ${host}.local "${c}"`),
                 scp = (s, d) => exec(`scp ${s} ${host}.local:${d || ''}`)
-            ssh(`mkdir -p ${DEST}`)
+            ssh(`sudo mkdir -p ${DEST}`)
+            ssh(`sudo chown $USER ${DEST}`)
             scp(`deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
             ssh(`cd ${DEST}; npm install`)
         }
