@@ -14,7 +14,7 @@ Home can run on any reasonable hardware running recent Linux. Other service modu
 v7.6.0 or later is needed since all modules are built assuming native async support. [nvm](https://github.com/creationix/nvm) is always advised for painless Node.js version management.
 
 ### Install
-1. Download the Home repository
+**1. Download the Home repository**
 
 Since this package stores local site configuration, `git` is used to manage local changes.
 ```
@@ -27,12 +27,12 @@ cd home
 > git checkout -b local
 > ```
 
-2. Install Home dependencies
+**2. Install Home dependencies**
 ```
 npm install
 ```
 
-4. Generate initial deployment
+**3. Generate initial deployment**
 
  The default site configuration is created from `config.json.template` the first time this step is performed. You will make changes to the generated `config.json` and repeat these steps as needed to add or modify host servers and services.
 
@@ -42,32 +42,40 @@ npm run config
 
 > This step stages a set of customized deploy-<host> scripts in `package.json` and deployment files in the `deploy` directory so you should now `git commit -a` the changes to your `local` branch.
 
-5. Deploy to each configured host
+**4. Deploy to host(s)**
 
-Run the deploy scripts individually to install each configured host. This installs the platform [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) , [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client), and configured service modules.
+Run the host deploy scripts individually. They install the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules and also [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) on the localhost.
 
 ```
 npm run deploy-`hostname`
 ```
-> The default install location is `/opt/theatersoft`. The `package.json` file in that directory contains operational scripts.
 
-6. Start the platform manually.
+> The install location is `/opt/theatersoft`. The `package.json` file in that directory contains operational scripts.
+
+> TODO Certificate installation for HTTPS server. Install `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`.
+
+> In order to use the normally privileged HTTPS port 443 as a normal user, we need to use `authbind`. Run `npm run authbind`once to set this up.
+
+**5. Start the platform**
 ```
 cd /opt/theatersoft
 npm run start
 ```
+> Install systemd services so the platform boots up automatically.
+  TODO generate and install the service files from the templates in `system`.
 
-7. Start a client
+**6. Start a client**
 
 Use the current stable version of Chrome to run the client web app.
 
 * Open `https://localhost`
-
-* Enter `0000` at the passcode screen. (Change config.password if desired.) NOTE Upcoming client pairing removes insecure password login.
+* Enter `0000` at the passcode screen.
+(Change config.password if desired.)
+NOTE Upcoming client pairing removes insecure password login.
 
 ### Other Administration Tasks
 
-### Configure port forwarding for external clients
+### Configure port forwarding for external network access
 
 ### Using Self-signed Server Certificates in Chrome
 Open `chrome://settings/certificates`
