@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "authbind": "sudo apt install authbind; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/443",
+    "mkdir": "DEST=/opt/theatersoft; sudo mkdir -p $DEST; sudo chown $USER $DEST",
     "link": "npm link @theatersoft/server",
     "config": "node deploy config",
     "debug-config": "node --inspect-brk deploy config"
