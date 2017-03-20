@@ -73,10 +73,10 @@ const targets = {
         if (Array.isArray(host)) host = host[0]
         log('target deploy', host)
         if (isRoot(host)) {
-            //exec(`sudo mkdir -p ${DEST}`)
-            //exec(`sudo chown $USER ${DEST}`)
-            exec(`cp deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
+            exec(`cp -v $(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
+            log(`start npm install`)
             exec(`cd ${DEST}; npm install`)
+            log(`done npm install`)
         } else {
             const
                 ssh = c => exec(`ssh ${host}.local "${c}"`),
@@ -84,7 +84,9 @@ const targets = {
             ssh(`sudo mkdir -p ${DEST}`)
             ssh(`sudo chown $USER ${DEST}`)
             scp(`deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
+            log(`start npm install`)
             ssh(`cd ${DEST}; npm install`)
+            log(`done npm install`)
         }
     }
 }
