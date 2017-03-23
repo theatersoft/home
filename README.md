@@ -46,15 +46,15 @@ npm run config
 
 Run the host deploy scripts individually. They install the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules and also [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) on the localhost.
 
+> **One time predeployment for root server only**
+> * `npm run mkdir` before the first deploy to create the destination directory `/opt/theatersoft`. The `sudo` command will prompt for password.
+> * `npm run authbind` in order to use the normally privileged HTTPS port 443 as a normal user.
+
 ```
-npm run deploy-`hostname`
+npm run deploy-${HOSTNAME}
 ```
 
-> The install location is `/opt/theatersoft`. The `package.json` file in that directory contains operational scripts.
-
-> TODO Certificate installation for HTTPS server. Install `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`.
-
-> In order to use the normally privileged HTTPS port 443 as a normal user, we need to use `authbind`. Run `npm run authbind`once to set this up.
+> TODO Server certificate installation. Install `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`.
 
 **5. Start the platform**
 ```
