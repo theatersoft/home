@@ -77,6 +77,7 @@ const targets = {
             log(`start npm install`)
             exec(`cd ${DEST}; npm install`)
             log(`done npm install`)
+            exec(`ln -sfvt ${DEST}/.config/theatersoft \$(pwd)/config.json`)
         } else {
             const
                 ssh = c => exec(`ssh ${host}.local "${c}"`),
