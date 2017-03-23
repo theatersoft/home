@@ -32,19 +32,19 @@ cd home
 npm install
 ```
 
-**3. Generate initial deployment**
-
- The default site configuration is created from `config.json.template` the first time this step is performed. You will make changes to the generated `config.json` and repeat these steps as needed to add or modify host servers and services.
+**3. Configure the deployment**
 
 ```
 npm run config
 ```
 
-> This step stages a set of customized deploy-<host> scripts in `package.json` and deployment files in the `deploy` directory so you should now `git commit -a` the changes to your `local` branch.
+ The default site configuration `config.json` is created from a template if it does not exist (e.g. first run). Whenever you change the configuration to add hosts or services you need to repeat the config and deploy steps.
+
+> This step also stages custom `deploy-<host>` scripts in `package.json` and deployment files in the `deploy` directory. You should `git commit -a` configuration changes to your `local` branch.
 
 **4. Deploy to host(s)**
 
-Run the host deploy scripts individually. They install the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules and also [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) on the localhost.
+Run the host deploy scripts individually. They install the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules and also [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) on localhost.
 
 > **One time predeployment for root server only**
 > * `npm run mkdir` before the first deploy to create the destination directory `/opt/theatersoft`. The `sudo` command will prompt for password.
