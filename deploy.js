@@ -2,12 +2,14 @@
 require('shelljs/make')
 const
     DEST = '/opt/theatersoft',
+    DEST_CONFIG_THEATERSOFT = `${DEST}/.config/theatersoft`,
     fs = require('fs'),
     pkg = require('./package.json'),
     hostname = require('os').hostname(),
     isRoot = host => host === hostname,
     execo = c => exec(c, {silent: true}).stdout.trim(),
-    write = (file, json) => fs.writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
+    write = (file, text) => fs.writeFileSync(file, text, 'utf-8'),
+    writeJson = (file, json) => writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
     log = console.log
 
 try {fs.accessSync('config.json')}
@@ -51,7 +53,7 @@ const targets = {
             o[`deploy-${name}`] = `node deploy deploy -- ${name}`
             return o
         }, {}))
-        write('package.json', pkg)
+        writeJson('package.json', pkg)
     },
 
     package (host, dependencies) {
@@ -59,7 +61,7 @@ const targets = {
         exec(`mkdir -p deploy/${host}`)
         const link = Object.keys(dependencies).map(d => `npm link ${d}`).join('; ')
         const start = `${pkg.deployScripts.start}${isRoot(host) ? '' : '-child'}`
-        write(`deploy/${host}/package.json`, Object.assign({}, pkg, {
+        writeJson(`deploy/${host}/package.json`, Object.assign({}, pkg, {
             dependencies,
             devDependencies: undefined,
             scripts: Object.assign({}, pkg.deployScripts, {link}, {start}),
@@ -73,11 +75,24 @@ const targets = {
         if (Array.isArray(host)) host = host[0]
         log('target deploy', host)
         if (isRoot(host)) {
+            // Install packages
             exec(`cp -v $(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
             log(`start npm install`)
             exec(`cd ${DEST}; npm install`)
             log(`done npm install`)
+
+            // Symlink config.json
             exec(`ln -sfvt ${DEST}/.config/theatersoft \$(pwd)/config.json`)
+
+            // Create bus env
+            process.env.XDG_CONFIG_HOME = `${DEST}/.config`
+            const
+                {createSession} = require('@theatersoft/server'),
+                auth = createSession(host, undefined, '@theatersoft/home')
+            write(`${DEST_CONFIG_THEATERSOFT}/.root`, `PORT=443\n`)
+            write(`${DEST_CONFIG_THEATERSOFT}/.bus`, `BUS=wss://localhost:443\nAUTH=${auth}\n`)
+
+            // Create server TLS certificate
         } else {
             const
                 ssh = c => exec(`ssh ${host}.local "${c}"`),
