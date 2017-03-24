@@ -1,4 +1,9 @@
 {
+  "_letsencrypt": {
+    "domain": "example.com",
+    "email": "email@example.com",
+    "production": true
+  },
   "password": "0000",
   "hosts": [
     {
