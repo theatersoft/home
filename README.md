@@ -54,7 +54,24 @@ Run the host deploy scripts individually. They install the platform server [@the
 npm run deploy-${HOSTNAME}
 ```
 
-> TODO Server certificate installation. Install `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`.
+> **Server certificate installation**
+> (TODO Deploy self signed `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`)
+> You'll need to access the server through a valid domain name using a trusted TLS certificate to satisfy modern browsers. Without going into too many specifics:
+> 1. Register a domain name
+>
+> 2. If you have a dynamic IP address use a dynamic dns client e.g. `ddclient` to update your provider's name server.
+>
+> 3. Get your SSL/TLS domain certificate and install `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`
+>
+>**NEW** The [greenlock](https://git.daplie.com/Daplie/node-greenlock) [Let's Encrypt](https://letsencrypt.org/) client is now integrated into the server. To enable, remove the underscore from this config key and use your actual `domain` and `email` values:
+>   ```
+>  "_letsencrypt": {
+>    "domain": "example.com",
+>    "email": "email@example.com",
+>    "production": true
+>  }
+>   ```
+>    Make sure ports 80 and 443 are port forwarded from the internet and you'll automatically get a free certificate.
 
 **5. Start the platform**
 ```
@@ -76,14 +93,6 @@ NOTE Upcoming client pairing removes insecure password login.
 ### Other Administration Tasks
 
 ### Configure port forwarding for external network access
-
-### Using Self-signed Server Certificates in Chrome
-Open `chrome://settings/certificates`
-
-Select the SERVERS tab
-
-`IMPORT` */opt/theatersoft/.config/theatersoft/server.cer*
-
 
 ### Use a custom domain name
 
