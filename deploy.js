@@ -9,11 +9,11 @@ const
     isRoot = host => host === hostname,
     execo = c => exec(c, {silent: true}).stdout.trim(),
     write = (file, text) => fs.writeFileSync(file, text, 'utf-8'),
-    writeJson = (file, json) => writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
-    log = console.log
+    writeJson = (file, json) => fs.writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
+    log = console.log,
+    exists = f => {try {fs.accessSync(f); return true} catch (e) {return false}}
 
-try {fs.accessSync('config.json')}
-catch (e) {
+if (!exists('config.json')) {
     log('Creating config.json')
     exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.json.template > config.json`)
 }
@@ -42,11 +42,14 @@ const targets = {
 
         hosts.forEach(({name, services = []}) => {
             log(`\n${name}`)
+
             targets.package(name, services.reduce((o, {module}) => {
                 const path = find(module)
                 o[module] = pack(path)
                 return o
             }, Object.assign({}, server, isRoot(name) && client)))
+
+            targets.env(name)
         })
 
         Object.assign(pkg.scripts, hosts.reduce((o, {name}) => {
@@ -70,6 +73,21 @@ const targets = {
         }))
     },
 
+    env (host) {
+        if (exists(`deploy/${host}/.bus`)) return
+        // Create bus env
+        process.env.XDG_CONFIG_HOME = `${DEST}/.config`
+        const
+            {createSession} = require('@theatersoft/server'),
+            auth = createSession(host, undefined, '@theatersoft/home')
+        if (host === hostname) {
+            write(`deploy/${host}/.root`, `PORT=443\n`)
+            write(`deploy/${host}/.bus`, `BUS=wss://localhost\nAUTH=${auth}\n`)
+        } else {
+            write(`deploy/${host}/.bus`, `BUS=wss://${hostname}.local\nAUTH=${auth}\n`)
+        }
+    },
+
     deploy (host) {
         if (!host) return hosts.forEach(({name}) => targets.deploy(name))
         if (Array.isArray(host)) host = host[0]
@@ -77,20 +95,13 @@ const targets = {
         if (isRoot(host)) {
             // Install packages
             exec(`cp -v $(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
+            exec(`cp -v deploy/${host}/.bus deploy/${host}/.root ${DEST}/.config/theatersoft`)
             log(`start npm install`)
             exec(`cd ${DEST}; npm install`)
             log(`done npm install`)
 
             // Symlink config.json
             exec(`ln -sfvt ${DEST}/.config/theatersoft \$(pwd)/config.json`)
-
-            // Create bus env
-            process.env.XDG_CONFIG_HOME = `${DEST}/.config`
-            const
-                {createSession} = require('@theatersoft/server'),
-                auth = createSession(host, undefined, '@theatersoft/home')
-            write(`${DEST_CONFIG_THEATERSOFT}/.root`, `PORT=443\n`)
-            write(`${DEST_CONFIG_THEATERSOFT}/.bus`, `BUS=wss://localhost:443\nAUTH=${auth}\n`)
 
             // Create server TLS certificate
         } else {
@@ -99,7 +110,8 @@ const targets = {
                 scp = (s, d) => exec(`scp ${s} ${host}.local:${d || ''}`)
             ssh(`sudo mkdir -p ${DEST}`)
             ssh(`sudo chown $USER ${DEST}`)
-            scp(`deploy/*.tgz deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
+            scp(`$(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
+            scp(`deploy/${host}/.bus`, `${DEST}/.config/theatersoft`)
             log(`start npm install`)
             ssh(`cd ${DEST}; npm install`)
             log(`done npm install`)
