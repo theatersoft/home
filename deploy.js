@@ -99,26 +99,37 @@ const targets = {
         if (isRoot(host)) {
             // Install packages
             exec(`cp -v $(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
-            exec(`cp -v deploy/${host}/.bus deploy/${host}/.root ${DEST}/.config/theatersoft`)
             log(`start npm install`)
             exec(`cd ${DEST}; npm install`)
             log(`done npm install`)
-
+            // Bus env
+            exec(`cp -v deploy/${host}/.bus deploy/${host}/.root ${DEST}/.config/theatersoft`)
             // Symlink config.json
             exec(`ln -sfvt ${DEST}/.config/theatersoft \$(pwd)/config.json`)
-
-            // Create server TLS certificate
+            // System services
         } else {
             const
                 ssh = c => exec(`ssh ${host}.local "${c}"`),
-                scp = (s, d) => exec(`scp ${s} ${host}.local:${d || ''}`)
+                scp = (s, d = '') => exec(`scp ${s} ${host}.local:${d}`),
+                sscp = (s, d) => exec(`cat ${s} | ssh ${host}.local "sudo tee ${d} > /dev/null"`)
+            // mkdir DEST
             ssh(`sudo mkdir -p ${DEST}`)
             ssh(`sudo chown $USER ${DEST}`)
+            ssh(`mkdir -p ${DEST}/.config/theatersoft`)
+            // Install packages
             scp(`$(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
-            scp(`deploy/${host}/.bus`, `${DEST}/.config/theatersoft`)
             log(`start npm install`)
             ssh(`cd ${DEST}; npm install`)
             log(`done npm install`)
+            // Bus env
+            scp(`deploy/${host}/.bus`, `${DEST}/.config/theatersoft`)
+            // System services
+            const capture = exists(`deploy/${host}/theatersoft-capture.service`)
+            sscp(`deploy/${host}/theatersoft.service`, `/usr/lib/systemd/system/theatersoft.service`)
+            capture && sscp(`deploy/${host}/theatersoft-capture.service`, `/usr/lib/systemd/system/theatersoft-capture.service`)
+            ssh('sudo systemctl daemon-reload')
+            ssh('sudo systemctl enable theatersoft')
+            capture && ssh('sudo systemctl enable theatersoft-capture')
         }
     }
 }
