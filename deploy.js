@@ -49,6 +49,16 @@ function hostEnv (host) {
     }
 }
 
+function hostSystem (host) {
+    const
+        root = host === hostname,
+        {cameras} = hosts.find(({name}) => name === host),
+        BUS = root ? '.root' : '.bus',
+        AUTHBIND = root ? '/usr/bin/authbind ' : ''
+    exec(`sed -e "s/{{USER}}/$USER/" -e 's/{{BUS}}/${BUS}/' -e 's|{{AUTHBIND}}|${AUTHBIND}|' system/theatersoft.service.template > deploy/${host}/theatersoft.service`)
+    cameras && exec(`sed "s/{{USER}}/$USER/" system/theatersoft-capture.service.template > deploy/${host}/theatersoft-capture.service`)
+}
+
 const targets = {
     config () {
         log('target config')
@@ -73,6 +83,7 @@ const targets = {
                 Object.assign({}, server, isRoot(name) && client)
             ))
             hostEnv(name)
+            hostSystem(name)
         })
 
         Object.assign(pkg.scripts, hosts.reduce((o, {name}) =>
