@@ -11,16 +11,43 @@ const
     write = (file, text) => fs.writeFileSync(file, text, 'utf-8'),
     writeJson = (file, json) => fs.writeFileSync(file, JSON.stringify(json, null, '  '), 'utf-8'),
     log = console.log,
-    exists = f => {try {fs.accessSync(f); return true} catch (e) {return false}}
+    exists = f => {
+        try {
+            fs.accessSync(f);
+            return true
+        } catch (e) {return false}
+    },
+    cfg = (!exists('config.json') && exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.json.template > config.json`), require('./config.json')),
+    {hosts = []} = cfg
 
-if (!exists('config.json')) {
-    log('Creating config.json')
-    exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.json.template > config.json`)
+function hostPackage (host, dependencies) {
+    log(`${host}\n`, dependencies)
+    exec(`mkdir -p deploy/${host}`)
+    const link = Object.keys(dependencies).map(d => `npm link ${d}`).join('; ')
+    const start = `${pkg.deployScripts.start}${isRoot(host) ? '' : '-child'}`
+    writeJson(`deploy/${host}/package.json`, Object.assign({}, pkg, {
+        dependencies,
+        devDependencies: undefined,
+        scripts: Object.assign({}, pkg.deployScripts, {link}, {start}),
+        deployScripts: undefined,
+        theatersoft: undefined
+    }))
 }
 
-const
-    cfg = require('./config.json'),
-    {hosts = []} = cfg
+function hostEnv (host) {
+    if (exists(`deploy/${host}/.bus`)) return
+    // Create bus env
+    process.env.XDG_CONFIG_HOME = `${DEST}/.config`
+    const
+        {createSession} = require('@theatersoft/server'),
+        auth = createSession(host, undefined, '@theatersoft/home')
+    if (host === hostname) {
+        write(`deploy/${host}/.root`, `PORT=443\n`)
+        write(`deploy/${host}/.bus`, `BUS=wss://localhost\nAUTH=${auth}\n`)
+    } else {
+        write(`deploy/${host}/.bus`, `BUS=wss://${hostname}.local\nAUTH=${auth}\n`)
+    }
+}
 
 const targets = {
     config () {
@@ -39,53 +66,19 @@ const targets = {
             client = {
                 "@theatersoft/client": pack(find('@theatersoft/client'))
             }
-
         hosts.forEach(({name, services = []}) => {
-            log(`\n${name}`)
-
-            targets.package(name, services.reduce((o, {module}) => {
-                const path = find(module)
-                o[module] = pack(path)
-                return o
-            }, Object.assign({}, server, isRoot(name) && client)))
-
-            targets.env(name)
+            hostPackage(name, services.reduce(
+                (o, {module}) =>
+                    (o[module] = pack(find(module)), o),
+                Object.assign({}, server, isRoot(name) && client)
+            ))
+            hostEnv(name)
         })
 
-        Object.assign(pkg.scripts, hosts.reduce((o, {name}) => {
-            o[`deploy-${name}`] = `node deploy deploy -- ${name}`
-            return o
-        }, {}))
+        Object.assign(pkg.scripts, hosts.reduce((o, {name}) =>
+            (o[`deploy-${name}`] = `node deploy deploy -- ${name}`, o), {})
+        )
         writeJson('package.json', pkg)
-    },
-
-    package (host, dependencies) {
-        log(dependencies)
-        exec(`mkdir -p deploy/${host}`)
-        const link = Object.keys(dependencies).map(d => `npm link ${d}`).join('; ')
-        const start = `${pkg.deployScripts.start}${isRoot(host) ? '' : '-child'}`
-        writeJson(`deploy/${host}/package.json`, Object.assign({}, pkg, {
-            dependencies,
-            devDependencies: undefined,
-            scripts: Object.assign({}, pkg.deployScripts, {link}, {start}),
-            deployScripts: undefined,
-            theatersoft: undefined
-        }))
-    },
-
-    env (host) {
-        if (exists(`deploy/${host}/.bus`)) return
-        // Create bus env
-        process.env.XDG_CONFIG_HOME = `${DEST}/.config`
-        const
-            {createSession} = require('@theatersoft/server'),
-            auth = createSession(host, undefined, '@theatersoft/home')
-        if (host === hostname) {
-            write(`deploy/${host}/.root`, `PORT=443\n`)
-            write(`deploy/${host}/.bus`, `BUS=wss://localhost\nAUTH=${auth}\n`)
-        } else {
-            write(`deploy/${host}/.bus`, `BUS=wss://${hostname}.local\nAUTH=${auth}\n`)
-        }
     },
 
     deploy (host) {
