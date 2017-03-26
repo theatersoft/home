@@ -87,9 +87,12 @@ const targets = {
             hostSystem(name)
         })
 
-        Object.assign(pkg.scripts, hosts.reduce((o, {name}) =>
-            (o[`deploy-${name}`] = `node deploy deploy -- ${name}`, o), {})
-        )
+        Object.assign(pkg.scripts, hosts.reduce((o, {name}) => {
+            o[`deploy-${name}`] = `node deploy deploy -- ${name}`
+            o[`journal-${name}`] = `node deploy journal -- ${name}`
+            o[`restart-${name}`] = `node deploy restart -- ${name}`
+            return o
+        }, {}))
         writeJson('package.json', pkg)
     },
 
@@ -152,6 +155,28 @@ const targets = {
             log(`done service install\n`)
             ssh('systemctl status theatersoft')
         }
+    },
+
+    async journal (host) {
+        if (Array.isArray(host)) host = host[0]
+        log('target journal', host)
+        const
+            ssh = c => exec(`ssh ${host}.local "${c}"`)
+        if (isRoot(host))
+            exec('journalctl -u theatersoft -f --no-tail')
+        else
+            ssh('journalctl -u theatersoft -f --no-tail')
+    },
+
+    async restart (host) {
+        if (Array.isArray(host)) host = host[0]
+        log('target restart', host)
+        const
+            ssh = c => exec(`ssh ${host}.local "${c}"`)
+        if (isRoot(host))
+            await execa('sudo systemctl restart theatersoft')
+        else
+            ssh('sudo systemctl restart theatersoft')
     }
 }
 Object.assign(target, targets)
