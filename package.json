@@ -17,7 +17,7 @@
     "start-capture": "XDG_CONFIG_HOME=/opt/theatersoft/.config npm explore @theatersoft/server npm run start-capture"
   },
   "devDependencies": {
-    "shelljs": "^0.7.0"
+    "shelljs": "^0.7.7"
   },
   "dependencies": {
     "@theatersoft/client": "~1",

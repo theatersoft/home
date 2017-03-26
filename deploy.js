@@ -18,7 +18,8 @@ const
         } catch (e) {return false}
     },
     cfg = (!exists('config.json') && exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.json.template > config.json`), require('./config.json')),
-    {hosts = []} = cfg
+    {hosts = []} = cfg,
+    execa = c => new Promise(r => exec(c, (code, stdout, stderr) => r()))
 
 function hostPackage (host, dependencies) {
     log(`${host}\n`, dependencies)
@@ -92,21 +93,27 @@ const targets = {
         writeJson('package.json', pkg)
     },
 
-    deploy (host) {
+    async deploy (host) {
         if (!host) return hosts.forEach(({name}) => targets.deploy(name))
         if (Array.isArray(host)) host = host[0]
         log('target deploy', host)
+        const capture = exists(`deploy/${host}/theatersoft-capture.service`)
         if (isRoot(host)) {
             // Install packages
             exec(`cp -v $(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
             log(`start npm install`)
-            exec(`cd ${DEST}; npm install`)
+            await execa(`cd ${DEST}; npm install`)
             log(`done npm install`)
             // Bus env
             exec(`cp -v deploy/${host}/.bus deploy/${host}/.root ${DEST}/.config/theatersoft`)
             // Symlink config.json
             exec(`ln -sfvt ${DEST}/.config/theatersoft \$(pwd)/config.json`)
             // System services
+            log(`\nstart system services install`)
+            await execa(`sudo cp -v deploy/${host}/*.service /usr/lib/systemd/system/`)
+            await execa('sudo systemctl daemon-reload')
+            await execa('sudo systemctl enable theatersoft')
+            capture && await execa('sudo systemctl enable theatersoft-capture')
         } else {
             const
                 ssh = c => exec(`ssh ${host}.local "${c}"`),
@@ -124,7 +131,6 @@ const targets = {
             // Bus env
             scp(`deploy/${host}/.bus`, `${DEST}/.config/theatersoft`)
             // System services
-            const capture = exists(`deploy/${host}/theatersoft-capture.service`)
             sscp(`deploy/${host}/theatersoft.service`, `/usr/lib/systemd/system/theatersoft.service`)
             capture && sscp(`deploy/${host}/theatersoft-capture.service`, `/usr/lib/systemd/system/theatersoft-capture.service`)
             ssh('sudo systemctl daemon-reload')
