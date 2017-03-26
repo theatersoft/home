@@ -1,16 +1,13 @@
 {
   "name": "home",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Theatersoft Home",
   "author": "Rob Huehn <rob@theatersoft.com>",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
-    "authbind": "sudo apt-get -qq install authbind; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/443; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/80",
-    "mkdir": "DEST=/opt/theatersoft; sudo mkdir -p $DEST/.config/theatersoft; sudo chown $USER $DEST",
     "link": "npm link @theatersoft/server",
-    "config": "node deploy config",
-    "debug-config": "node --inspect-brk deploy config"
+    "config": "node deploy config"
   },
   "deployScripts": {
     "start": "XDG_CONFIG_HOME=/opt/theatersoft/.config npm explore @theatersoft/server npm run start",

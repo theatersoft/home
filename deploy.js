@@ -99,6 +99,12 @@ const targets = {
         log('target deploy', host)
         const capture = exists(`deploy/${host}/theatersoft-capture.service`)
         if (isRoot(host)) {
+            // mkdir DEST
+            if (!exists('/opt/theatersoft'))
+                await execa(`sudo mkdir -p ${DEST}; sudo chown $USER ${DEST}; mkdir -p ${DEST}/.config/theatersoft`)
+            // authbind
+            if (!exists('/etc/authbind/byport/443'))
+                await execa(`sudo apt-get -q install authbind; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/443; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/80`)
             // Install packages
             exec(`cp -v $(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
             log(`\nstart npm install`)

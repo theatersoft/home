@@ -33,7 +33,6 @@ npm install
 ```
 
 **3. Configure the deployment**
-
 ```
 npm run config
 ```
@@ -43,11 +42,6 @@ npm run config
 > This step creates custom deploy scripts in `package.json` and deployment files in the `deploy` directory. You should `git commit -a` changes to your `local` branch.
 
 **4. Deploy to host(s)**
-
-> **One time predeployment for root server only**
-> * `npm run mkdir` before the first deploy to create the destination directory `/opt/theatersoft`. The `sudo` command will prompt for password.
-> * `npm run authbind` in order to use the normally privileged HTTPS port 443 as a normal user.
-
 > **Server certificate installation**
 >
 > You'll need to access the server through a valid domain name with a trusted TLS certificate to satisfy modern browsers. Without getting too detailed:
@@ -65,13 +59,15 @@ npm run config
 >   ```
 >
 
-Run the host deploy script. (If you've configured multiple hosts there will be an npm script for each host.)
+Run the host deploy script. If you've configured multiple hosts there will be an npm script for each host.
 ```
 npm run deploy-${HOSTNAME}
 ```
-The deploy process installs the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules. On the local root server [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) is also installed. The server is started at the end of the deploy script.
+The first deploy to the local host will prompt for sudo password. It needs to create `/opt/theatersoft`, install `authbind`, and install the service.
 
-> The `theatersoft.service` systemd unit is enabled to restart automatically after reboot.  The usual management commands apply, e.g.:
+The deploy process installs the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules. On the local root server [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) is also installed.
+
+> The systemd `theatersoft.service` is started and enabled to restart automatically after reboot.  The usual management commands apply, e.g.:
 > ```
 >  systemctl status theatersoft
 >  systemctl stop theatersoft
