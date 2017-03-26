@@ -40,48 +40,45 @@ npm run config
 
  The default site configuration `config.json` is created from a template if it does not exist (e.g. first run). Whenever you change the configuration to add hosts or services you need to repeat the config and deploy steps.
 
-> This step also stages custom `deploy-<host>` scripts in `package.json` and deployment files in the `deploy` directory. You should `git commit -a` configuration changes to your `local` branch.
+> This step creates custom deploy scripts in `package.json` and deployment files in the `deploy` directory. You should `git commit -a` changes to your `local` branch.
 
 **4. Deploy to host(s)**
-
-Run the host deploy scripts individually. They install the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules and also [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) on localhost.
 
 > **One time predeployment for root server only**
 > * `npm run mkdir` before the first deploy to create the destination directory `/opt/theatersoft`. The `sudo` command will prompt for password.
 > * `npm run authbind` in order to use the normally privileged HTTPS port 443 as a normal user.
 
+> **Server certificate installation**
+>
+> You'll need to access the server through a valid domain name with a trusted TLS certificate to satisfy modern browsers. Without getting too detailed:
+> 1. Register a domain name
+> 2. If you have a dynamic IP address use a dynamic dns client e.g. `ddclient` to update your provider's name server.
+> 3. Forward ports 80 and 443 from the internet to your server in your router settings.
+> 4. The [greenlock](https://git.daplie.com/Daplie/node-greenlock) [Let's Encrypt](https://letsencrypt.org/) client is integrated with the server to provide a free and automatic certificate for your domain. Edit `config.json`;  remove the underscore from the config key and provide your own values for `domain` and `email`:
+>
+>   ```
+>   "_letsencrypt": {
+>     "domain": "example.com",
+>    "email": "email@example.com",
+>    "production": true
+>   }
+>   ```
+>
+
+Run the host deploy script. (If you've configured multiple hosts there will be an npm script for each host.)
 ```
 npm run deploy-${HOSTNAME}
 ```
+The deploy process installs the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules. On the local root server [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) is also installed. The server is started at the end of the deploy script.
 
-> **Server certificate installation**
-> (TODO Deploy self signed `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`)
-> You'll need to access the server through a valid domain name using a trusted TLS certificate to satisfy modern browsers. Without going into too many specifics:
-> 1. Register a domain name
->
-> 2. If you have a dynamic IP address use a dynamic dns client e.g. `ddclient` to update your provider's name server.
->
-> 3. Get your SSL/TLS domain certificate and install `server.cer` and `server.key` in `/opt/theatersoft/.config/theatersoft`
->
->**NEW** The [greenlock](https://git.daplie.com/Daplie/node-greenlock) [Let's Encrypt](https://letsencrypt.org/) client is now integrated into the server. To enable, remove the underscore from this config key and use your actual `domain` and `email` values:
->   ```
->  "_letsencrypt": {
->    "domain": "example.com",
->    "email": "email@example.com",
->    "production": true
->  }
->   ```
->    Make sure ports 80 and 443 are port forwarded from the internet and you'll automatically get a free certificate.
+> The `theatersoft.service` systemd unit is enabled to restart automatically after reboot.  The usual management commands apply, e.g.:
+> ```
+>  systemctl status theatersoft
+>  systemctl stop theatersoft
+>  systemctl start theatersoft
+> ```
 
-**5. Start the platform**
-```
-cd /opt/theatersoft
-npm run start
-```
-> Install systemd services so the platform boots up automatically.
-  TODO generate and install the service files from the templates in `system`.
-
-**6. Start a client**
+**5. Start a client**
 
 Use the current stable version of Chrome to run the client web app.
 
