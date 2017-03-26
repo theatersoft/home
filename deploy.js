@@ -97,7 +97,9 @@ const targets = {
         if (!host) return hosts.forEach(({name}) => targets.deploy(name))
         if (Array.isArray(host)) host = host[0]
         log('target deploy', host)
-        const capture = exists(`deploy/${host}/theatersoft-capture.service`)
+        const
+            capture = exists(`deploy/${host}/theatersoft-capture.service`),
+            tars = Object.values(require(`./deploy/${host}/package.json`).dependencies).filter(s => s.endsWith('.tgz')).map(s => `deploy/${s}`).join(' ')
         if (isRoot(host)) {
             // mkdir DEST
             if (!exists('/opt/theatersoft'))
@@ -106,7 +108,8 @@ const targets = {
             if (!exists('/etc/authbind/byport/443'))
                 await execa(`sudo apt-get -q install authbind; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/443; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/80`)
             // Install packages
-            exec(`cp -v $(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
+            exec(`rm ${DEST}/*.tgz`)
+            exec(`cp -v ${tars} deploy/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
             log(`\nstart npm install`)
             await execa(`cd ${DEST}; npm install`)
             log(`done npm install\n`)
@@ -132,7 +135,8 @@ const targets = {
             ssh(`sudo chown $USER ${DEST}`)
             ssh(`mkdir -p ${DEST}/.config/theatersoft`)
             // Install packages
-            scp(`$(ls deploy/*.tgz) deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
+            ssh(`rm ${DEST}/*.tgz`)
+            scp(`${tars} deploy/${host}/package.json COPYRIGHT LICENSE`, DEST)
             log(`start npm install`)
             ssh(`cd ${DEST}; npm install`)
             log(`done npm install\n`)
