@@ -91,6 +91,7 @@ const targets = {
             o[`deploy-${name}`] = `node deploy deploy -- ${name}`
             o[`journal-${name}`] = `node deploy journal -- ${name}`
             o[`restart-${name}`] = `node deploy restart -- ${name}`
+            o[`stop-${name}`] = `node deploy stop -- ${name}`
             return o
         }, {}))
         writeJson('package.json', pkg)
@@ -177,6 +178,17 @@ const targets = {
             await execa('sudo systemctl restart theatersoft')
         else
             ssh('sudo systemctl restart theatersoft')
+    },
+
+    async stop (host) {
+        if (Array.isArray(host)) host = host[0]
+        log('target stop', host)
+        const
+            ssh = c => exec(`ssh ${host}.local "${c}"`)
+        if (isRoot(host))
+            await execa('sudo systemctl stop theatersoft')
+        else
+            ssh('sudo systemctl stop theatersoft')
     }
 }
 Object.assign(target, targets)
