@@ -1,12 +1,14 @@
 {
-  "name": "home",
+  "name": "@theatersoft/home",
   "version": "2.0.0",
   "description": "Theatersoft Home",
   "author": "Rob Huehn <rob@theatersoft.com>",
   "license": "AGPL-3.0",
   "private": true,
+  "main": "deploy.js",
   "scripts": {
     "link": "npm link @theatersoft/server",
+    "debug": "node --inspect-brk deploy config",
     "config": "node deploy config"
   },
   "deployScripts": {
@@ -14,10 +16,8 @@
   },
   "dependencies": {
     "@theatersoft/client": "~1",
+    "@theatersoft/device": "~1",
     "@theatersoft/server": "~3",
     "shelljs": "^0.7.7"
-  },
-  "theatersoft": {
-    "pack": false
   }
 }

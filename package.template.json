@@ -1,0 +1,18 @@
+{
+  "name": "@theatersoft/home",
+  "version": "2.0.0",
+  "description": "Theatersoft Home site installation",
+  "author": "Rob Huehn <rob@theatersoft.com>",
+  "license": "AGPL-3.0",
+  "private": true,
+  "scripts": {
+    "HOME": "npm explore @theatersoft/home npm run",
+    "config": "npm run HOME -- config"
+  },
+  "dependencies": {
+    "@theatersoft/home": "~2"
+  },
+  "theatersoft": {
+    "pack": false
+  }
+}
