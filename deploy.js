@@ -159,39 +159,6 @@ const targets = {
             log(`done service install\n`)
             ssh('systemctl status theatersoft')
         }
-    },
-
-    async journal (host) {
-        if (Array.isArray(host)) host = host[0]
-        log('target journal', host)
-        const
-            ssh = c => exec(`ssh ${host}.local "${c}"`)
-        if (isRoot(host))
-            exec('journalctl -u theatersoft -f --no-tail')
-        else
-            ssh('journalctl -u theatersoft -f --no-tail')
-    },
-
-    async restart (host) {
-        if (Array.isArray(host)) host = host[0]
-        log('target restart', host)
-        const
-            ssh = c => exec(`ssh ${host}.local "${c}"`)
-        if (isRoot(host))
-            await execa('sudo systemctl restart theatersoft')
-        else
-            ssh('sudo systemctl restart theatersoft')
-    },
-
-    async stop (host) {
-        if (Array.isArray(host)) host = host[0]
-        log('target stop', host)
-        const
-            ssh = c => exec(`ssh ${host}.local "${c}"`)
-        if (isRoot(host))
-            await execa('sudo systemctl stop theatersoft')
-        else
-            ssh('sudo systemctl stop theatersoft')
     }
 }
 Object.assign(target, targets)
