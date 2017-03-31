@@ -115,7 +115,7 @@ const targets = {
             if (!exists('/etc/authbind/byport/443'))
                 await execa(`sudo apt-get -q install authbind; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/443; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/80`)
             // Install packages
-            exec(`rm ${DEST}/*.tgz`)
+            exec(`rm -f ${DEST}/*.tgz`)
             exec(`cp -v ${tars} ${DEPLOY}/${host}/package.json COPYRIGHT LICENSE ${DEST}`)
             log(`\nstart npm install`)
             await execa(`cd ${DEST}; npm install`)
@@ -142,7 +142,7 @@ const targets = {
             ssh(`sudo chown $USER ${DEST}`)
             ssh(`mkdir -p ${DEST}/.config/theatersoft`)
             // Install packages
-            ssh(`rm ${DEST}/*.tgz`)
+            ssh(`rm -f ${DEST}/*.tgz`)
             scp(`${tars} ${DEPLOY}/${host}/package.json COPYRIGHT LICENSE`, DEST)
             log(`start npm install`)
             ssh(`cd ${DEST}; npm install`)
