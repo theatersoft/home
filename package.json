@@ -6,8 +6,8 @@
   "license": "AGPL-3.0",
   "scripts": {
     "link": "npm link @theatersoft/server",
-    "debug": "node --inspect-brk deploy config",
-    "config": "node deploy config"
+    "debug": "node --inspect-brk index config",
+    "config": "node index config"
   },
   "deployScripts": {
     "start": "XDG_CONFIG_HOME=/opt/theatersoft/.config npm explore @theatersoft/server npm run start"
