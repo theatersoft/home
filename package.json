@@ -4,8 +4,6 @@
   "description": "Theatersoft Home",
   "author": "Rob Huehn <rob@theatersoft.com>",
   "license": "AGPL-3.0",
-  "private": true,
-  "main": "deploy.js",
   "scripts": {
     "link": "npm link @theatersoft/server",
     "debug": "node --inspect-brk deploy config",
