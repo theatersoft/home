@@ -6,8 +6,8 @@
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
-    "HOME": "npm explore @theatersoft/home npm run",
-    "config": "npm run HOME -- config"
+    "HOME": "npm explore @theatersoft/home -- npm run",
+    "config": "npm run HOME config"
   },
   "dependencies": {
     "@theatersoft/home": "~2"
