@@ -143,8 +143,8 @@ const targets = {
             log(`\nstart service install`)
             await execa(`sudo cp -v ${DEPLOY}/${host}/*.service /etc/systemd/system/`)
             await execa('sudo systemctl daemon-reload')
-            await execa('sudo systemctl enable theatersoft; sudo systemctl start theatersoft')
-            capture && await execa('sudo systemctl enable theatersoft-capture; sudo systemctl start theatersoft-capture')
+            await execa('sudo systemctl enable theatersoft; sudo systemctl restart theatersoft')
+            capture && await execa('sudo systemctl enable theatersoft-capture; sudo systemctl restart theatersoft-capture')
             log(`done service install\n`)
             await execa('systemctl status theatersoft')
         } else {
@@ -169,8 +169,8 @@ const targets = {
             sscp(`${DEPLOY}/${host}/theatersoft.service`, `/etc/systemd/system/theatersoft.service`)
             capture && sscp(`${DEPLOY}/${host}/theatersoft-capture.service`, `/etc/systemd/system/theatersoft-capture.service`)
             ssh('sudo systemctl daemon-reload')
-            ssh('sudo systemctl enable theatersoft; sudo systemctl start theatersoft')
-            capture && ssh('sudo systemctl enable theatersoft-capture; sudo systemctl start theatersoft-capture')
+            ssh('sudo systemctl enable theatersoft; sudo systemctl restart theatersoft')
+            capture && ssh('sudo systemctl enable theatersoft-capture; sudo systemctl restart theatersoft-capture')
             log(`done service install\n`)
             ssh('systemctl status theatersoft')
         }
