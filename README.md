@@ -25,33 +25,40 @@ v7.6.0 or later is needed since all modules are built assuming native async supp
 >sudo ln -sf $n/npm /usr/local/bin/npm
 >```
 
-### Install
-**1. Download the Home repository**
-
-Since this package stores local site configuration, `git` is used to manage local changes.
+### Installation
+**1. Install @theatersoft/home**
 ```
-git clone git@github.com:theatersoft/home.git
-cd home
+mkdir site; cd site; npm install @theatersoft/home
 ```
 
 >You should now create a local branch to save any local site configuration.
 >```
+>git init
 >git checkout -b local
 >```
 
-**2. Install Home dependencies**
+**2. Configure**
 ```
-npm install
+npm explore @theatersoft/home npm run config
 ```
-
-**3. Configure the deployment**
-```
-npm run config
-```
-
- Your default site configuration `config.json` is created from a template if it does not exist (e.g. first run). When you change the configuration to add hosts or services you need to repeat the config and deploy steps.
-
->This step creates custom deploy scripts in `package.json` and deployment files in the `deploy` directory. You should `git commit -a` changes to your `local` branch.
+>Upon completion your `site` directory contains:
+>```
+>├── config.json
+>├── deploy
+>├── node_modules
+>└── package.json
+>```
+> `config.json` is your site configuration. When you change the configuration to add hosts or services you may need to repeat the config and deploy steps.
+>
+>The `deploy` directory contains customized deployment files for each host in the configuration.
+>
+>The `node_modules` directory contains `home` dependencies.
+>
+>`package.json` contains npm scripts:
+>* `config`
+>* `deploy`
+>
+> ...and also `journal`, `restart`, and `stop` scripts for managing the system service.
 
 **4. Deploy to host(s)**
 >**Server certificate installation**
@@ -70,15 +77,15 @@ npm run config
 >}
 >```
 
-Run the host deploy script. If you've configured multiple hosts there will be an npm script for each host.
+Run the host deploy script. (If you've configured multiple hosts there will be an npm script for each host that can be used to deploy individual hosts.)
 ```
-npm run deploy-${HOSTNAME}
+npm run deploy
 ```
 The first deploy to the local host will prompt for sudo password. It needs to create `/opt/theatersoft`, install `authbind`, and install the service.
 
 The deploy process installs the platform server [@theatersoft/server](https://www.npmjs.com/package/@theatersoft/server) along with any configured service modules. On the local root server [@theatersoft/client](https://www.npmjs.com/package/@theatersoft/client) is also installed.
 
->The systemd `theatersoft.service` is started and enabled to restart automatically after reboot.  The usual management commands apply, e.g.:
+>The systemd `theatersoft.service` is started and enabled to restart automatically after reboot.  The usual management commands also apply, e.g.:
 >```
 >systemctl status theatersoft
 >systemctl stop theatersoft
