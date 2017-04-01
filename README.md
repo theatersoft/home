@@ -31,12 +31,6 @@ v7.6.0 or later is needed since all modules are built assuming native async supp
 mkdir site; cd site; npm install @theatersoft/home
 ```
 
->You should now create a local branch to save any local site configuration.
->```
->git init
->git checkout -b local
->```
-
 **2. Configure**
 ```
 npm explore @theatersoft/home npm run config
