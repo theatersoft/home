@@ -108,6 +108,8 @@ const targets = {
             return o
         }, {}))
         writeJson(PACKAGE, sitePkg)
+
+        exec(`cp .gitignore ${SITE}`)
     },
 
     async deploy (host) {
