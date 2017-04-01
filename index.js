@@ -1,5 +1,6 @@
 'use strict'
 require('shelljs/make')
+config.fatal = false
 const
     fs = require('fs'),
     path = require('path'),
@@ -79,9 +80,9 @@ const targets = {
         exec(`mkdir -p ${DEPLOY}`)
         const
             find = module => execo(`(cd ${SITE}; npm explore ${module} pwd)`),
-            pack = path => sitePkg.theatersoft.pack
-                ? execo(`cd ${DEPLOY}; npm pack ${path}`)
-                : require(`${path}/package.json`).version,
+            pack = path => !path ? 'latest' :
+                sitePkg.theatersoft.pack ? execo(`cd ${DEPLOY}; npm pack ${path}`) :
+                    require(`${path}/package.json`).version,
             server = {
                 "@theatersoft/server": pack(find('@theatersoft/server')),
                 "@theatersoft/bus": pack(find('@theatersoft/bus'))
