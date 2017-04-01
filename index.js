@@ -126,7 +126,7 @@ const targets = {
             // Bus env
             exec(`cp -v ${DEPLOY}/${host}/.bus ${DEPLOY}/${host}/.root ${DEST}/.config/theatersoft`)
             // Symlink config.json
-            exec(`ln -sfvt ${DEST}/.config/theatersoft \$(pwd)/config.json`)
+            exec(`ln -sfvt ${DEST}/.config/theatersoft ${CONFIG}`)
             // System services
             log(`\nstart service install`)
             await execa(`sudo cp -v ${DEPLOY}/${host}/*.service /etc/systemd/system/`)
