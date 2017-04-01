@@ -1,5 +1,4 @@
 {
-  "name": "@theatersoft/home",
   "description": "Theatersoft Home site installation",
   "private": true,
   "scripts": {

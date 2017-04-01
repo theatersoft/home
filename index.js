@@ -23,9 +23,18 @@ const
     },
     pkg = require('./package.json'),
     cfg = (!exists(CONFIG) && exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.json.template > ${CONFIG}`), require(CONFIG)),
-    sitePkg = (!exists(PACKAGE) && exec(`cp package.template.json ${PACKAGE}`), require(PACKAGE)),
+    sitePkg = sitePackage(),
     {hosts = []} = cfg,
     execa = c => new Promise(r => exec(c, (code, stdout, stderr) => r()))
+
+function sitePackage () {
+    if (!exists(PACKAGE)) {
+        writeJson(PACKAGE, Object.assign({}, require('./package.template.json'), {
+            name: path.basename(SITE)
+        }))
+    }
+    return require(PACKAGE)
+}
 
 function hostPackage (host, dependencies) {
     log(`${host}\n`, dependencies)
