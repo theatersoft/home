@@ -101,9 +101,12 @@ const targets = {
     },
 
     async deploy (host) {
-        if (!host) return hosts.forEach(({name}) => targets.deploy(name))
+        if (!host) {
+            for (const {name} of hosts) await targets.deploy(name)
+            return
+        }
         if (Array.isArray(host)) host = host[0]
-        log('target deploy', host)
+        log(`\ntarget deploy ${host}\n`)
         const
             capture = exists(`${DEPLOY}/${host}/theatersoft-capture.service`),
             tars = Object.values(require(`${DEPLOY}/${host}/package.json`).dependencies).filter(s => s.endsWith('.tgz')).map(s => `${DEPLOY}/${s}`).join(' ')

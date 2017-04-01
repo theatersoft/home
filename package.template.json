@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "HOME": "npm explore @theatersoft/home -- npm run",
-    "config": "npm run HOME config"
+    "config": "npm run HOME config",
+    "deploy": "npm run HOME deploy"
   },
   "dependencies": {
     "@theatersoft/home": "~2"
