@@ -23,7 +23,7 @@ const
         } catch (e) {return false}
     },
     pkg = require('./package.json'),
-    cfg = (!exists(CONFIG) && exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.json.template > ${CONFIG}`), require(CONFIG)),
+    cfg = (!exists(CONFIG) && exec(`sed 's/{{HOSTNAME}}/${hostname}/' config.template.json > ${CONFIG}`), require(CONFIG)),
     sitePkg = sitePackage(),
     {hosts = []} = cfg,
     execa = c => new Promise(r => exec(c, (code, stdout, stderr) => r()))
