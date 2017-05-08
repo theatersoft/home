@@ -9,6 +9,8 @@ Environment=XDG_CONFIG_HOME=/opt/theatersoft/.config/
 EnvironmentFile=/opt/theatersoft/.config/theatersoft/.bus
 ExecStartPre=/bin/sleep 2
 ExecStart=/usr/local/bin/node capture/start.js
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

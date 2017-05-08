@@ -7,6 +7,8 @@ WorkingDirectory=/opt/theatersoft/node_modules/@theatersoft/server/
 Environment=XDG_CONFIG_HOME=/opt/theatersoft/.config/
 EnvironmentFile=/opt/theatersoft/.config/theatersoft/{{BUS}}
 ExecStart={{AUTHBIND}}/usr/local/bin/node server.js
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
