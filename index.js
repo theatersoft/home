@@ -109,7 +109,7 @@ const targets = {
         }, {}))
         writeJson(PACKAGE, sitePkg)
 
-        exec(`cp .gitignore ${SITE}`)
+        exec(`echo '/_*\nnode_modules\n.idea\n/deploy' >${SITE}/.gitignore`)
     },
 
     async deploy (host) {
