@@ -103,8 +103,8 @@ const targets = {
         Object.assign(sitePkg.scripts, hosts.reduce((o, {name: host}) => {
             o[`deploy-${host}`] = `npm run deploy -- -- -- ${host}`
             o[`journal-${host}`] = `${isRoot(host) ? '' : `ssh ${host}.local `}journalctl -u theatersoft -f --no-tail`
-            o[`restart-${host}`] = `${isRoot(host) ? '' : `ssh ${host}.local `}sudo systemctl restart theatersoft`
-            o[`stop-${host}`] = `${isRoot(host) ? '' : `ssh ${host}.local `}sudo systemctl stop theatersoft`
+            o[`restart-${host}`] = `${isRoot(host) ? '' : `ssh ${host}.local sudo `}systemctl restart theatersoft`
+            o[`stop-${host}`] = `${isRoot(host) ? '' : `ssh ${host}.local sudo `}systemctl stop theatersoft`
             return o
         }, {}))
         writeJson(PACKAGE, sitePkg)
