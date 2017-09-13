@@ -49,8 +49,11 @@ function hostPackage (host, dependencies) {
     }))
 }
 
-function hostEnv (host) {
+async function hostEnv (host) {
     if (exists(`${DEPLOY}/${host}/.bus`)) return
+    // mkdir DEST
+    if (!exists('/opt/theatersoft'))
+        await execa(`sudo mkdir -p ${DEST}; sudo chown $USER ${DEST}; mkdir -p ${DEST}/.config/theatersoft`)
     // Create bus env
     process.env.XDG_CONFIG_HOME = `${DEST}/.config`
     const
@@ -90,13 +93,13 @@ const targets = {
             client = {
                 "@theatersoft/client": pack(find('@theatersoft/client'))
             }
-        hosts.forEach(({name, services = []}) => {
+        hosts.forEach(async ({name, services = []}) => {
             hostPackage(name, services.reduce(
                 (o, {module}) =>
                     (o[module] = pack(find(module)), o),
                 Object.assign({}, server, isRoot(name) && client)
             ))
-            hostEnv(name)
+            await hostEnv(name)
             hostSystem(name)
         })
 
