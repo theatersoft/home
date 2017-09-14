@@ -127,8 +127,10 @@ const targets = {
             tars = Object.values(require(`${DEPLOY}/${host}/package.json`).dependencies).filter(s => s.endsWith('.tgz')).map(s => `${DEPLOY}/${s}`).join(' ')
         if (isRoot(host)) {
             // mkdir DEST
-            if (!exists('/opt/theatersoft'))
-                await execa(`sudo mkdir -p ${DEST}; sudo chown $USER ${DEST}; mkdir -p ${DEST}/.config/theatersoft`)
+            if (!exists(DEST)) {
+                await execa(`sudo mkdir -p ${DEST}; sudo chown $USER ${DEST}; mkdir -p ${DEST_CONFIG_THEATERSOFT}`)
+                exec(`cp -v 'settings.template.json' ${DEST_CONFIG_THEATERSOFT}/settings.json`)
+            }
             // authbind
             if (!exists('/etc/authbind/byport/443'))
                 await execa(`sudo apt-get -q install authbind; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/443; sudo install -o $USER -m 755 /dev/null /etc/authbind/byport/80`)
