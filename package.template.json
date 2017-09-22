@@ -9,6 +9,7 @@
     "@theatersoft/home": "~2"
   },
   "theatersoft": {
-    "pack": false
+    "pack": false,
+    "port": 443
   }
 }

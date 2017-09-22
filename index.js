@@ -58,12 +58,13 @@ async function hostEnv (host) {
     process.env.XDG_CONFIG_HOME = `${DEST}/.config`
     const
         {createSession} = require('@theatersoft/server'),
-        auth = createSession(host, undefined, '@theatersoft/home')
+        auth = createSession(host, undefined, '@theatersoft/home'),
+        port = sitePkg.theatersoft.port
     if (host === hostname) {
-        write(`${DEPLOY}/${host}/.root`, `PORT=443\n`)
-        write(`${DEPLOY}/${host}/.bus`, `BUS=wss://localhost\nAUTH=${auth}\n`)
+        write(`${DEPLOY}/${host}/.root`, `PORT=${port}\n`)
+        write(`${DEPLOY}/${host}/.bus`, `BUS=wss://localhost:${port}\nAUTH=${auth}\n`)
     } else {
-        write(`${DEPLOY}/${host}/.bus`, `BUS=wss://${hostname}.local\nAUTH=${auth}\n`)
+        write(`${DEPLOY}/${host}/.bus`, `BUS=wss://${hostname}.local:${port}\nAUTH=${auth}\n`)
     }
 }
 
