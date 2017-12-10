@@ -10,9 +10,9 @@
     "deploy": "node index deploy"
   },
   "deployScripts": {
-    "debug": "npm explore @theatersoft/server npm run debug",
+    "debug": "npm explore @theatersoft/server npm run debug-opt",
     "debug-child": "npm explore @theatersoft/server npm run debug-child",
-    "start": "npm explore @theatersoft/server npm run start",
+    "start": "npm explore @theatersoft/server npm run start-opt",
     "start-child": "npm explore @theatersoft/server npm run start-child"
   },
   "dependencies": {
