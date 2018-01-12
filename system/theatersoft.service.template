@@ -9,6 +9,7 @@ EnvironmentFile=/opt/theatersoft/.config/theatersoft/{{BUS}}
 ExecStart={{AUTHBIND}}/usr/local/bin/node start.js
 Restart=always
 RestartSec=10
+SyslogIdentifier=theatersoft
 
 [Install]
 WantedBy=multi-user.target

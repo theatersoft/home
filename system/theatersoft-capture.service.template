@@ -11,6 +11,7 @@ ExecStartPre=/bin/sleep 2
 ExecStart=/usr/local/bin/node capture/start.js
 Restart=always
 RestartSec=10
+SyslogIdentifier=theatersoft-capture
 
 [Install]
 WantedBy=multi-user.target
