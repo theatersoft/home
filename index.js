@@ -166,7 +166,7 @@ const targets = {
             ssh(`rm -f ${DEST}/*.tgz`)
             scp(`${tars} ${DEPLOY}/${host}/package.json COPYRIGHT LICENSE`, DEST)
             log(`start npm install`)
-            ssh(`cd ${DEST}; npm install`)
+            ssh(`cd ${DEST}; npm install --no-package-lock *.tgz`)
             log(`done npm install\n`)
             // Bus env
             scp(`${DEPLOY}/${host}/.bus`, `${DEST}/.config/theatersoft`)
