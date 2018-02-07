@@ -5,6 +5,9 @@
   "repository": "theatersoft/home",
   "author": "Rob Huehn <rob@theatersoft.com>",
   "license": "AGPL-3.0",
+  "engines": {
+    "node": ">=8.5.0"
+  },
   "scripts": {
     "config": "node index config",
     "deploy": "node index deploy"
