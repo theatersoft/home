@@ -5,14 +5,10 @@
 </p>
 
 ## Theatersoft Home
- 
-Theatersoft Home is an home automation hub where smart devices using different protocols work together inside a common web interface. It's built on a platform of extensible services and developer friendly APIs for JavaScript developers. 
-
-### Checklist
-* Any Linux machine such as a Raspberry Pi 3, mini PC, or container.
-* USB Z-Wave or other hardware interface adapters for desired services and devices.
+Theatersoft Home is a home automation hub where smart devices of all types work together inside a touchscreen web app. Theatersoft builds on a distributed platform of extensible messaging services to encourage community driven device support. Developer friendly APIs enable automations directly in JavaScript for completely customized scenarios.
 
 ### Installation
+You can use any Linux machine such as a Raspberry Pi 3, mini PC, or container.
 
 Create a directory to store your Theatersoft configuration; then install, configure, and deploy `@theatersoft/home`:
 ```
@@ -23,7 +19,7 @@ npm run deploy
 ```
 The Theatersoft server is now running. 
 
-See [www.theatersoft.com/install](https://www.theatersoft.com/install/) to learn how to:
+See [www.theatersoft.com/install](https://www.theatersoft.com/install/) for more instructions to:
  * create a server certificate
  * pair a web client
  * use a custom domain name
