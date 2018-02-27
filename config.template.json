@@ -10,8 +10,6 @@
       "name": "{{HOSTNAME}}",
       "host": "{{HOSTNAME}}.local",
       "mac": "00:00:00:00:00:0",
-      "cameras": [
-      ],
       "services": [
         {
           "enabled": true,
@@ -23,8 +21,6 @@
         }
       ]
     }
-  ],
-  "cameras": [
   ],
   "configs": {
   }
